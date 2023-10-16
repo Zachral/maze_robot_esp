@@ -1,32 +1,34 @@
-# _Sample project_
+Maze solving robot!
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+Purpose of the robot:
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+To be able to solve a maze by finding the goal.
 
+The robot should:
 
+    Independently move itself.
+    Choose a path at intersections.
+    Avoid driving in circles.
+    Avoid hitting walls in the maze.
+    Save the path choices it makes.
+    Distinguish between a regular wall and the goal using color detection.
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+It is desirable that the robot would:
 
-## Example folder contents
+    Optimize the path over multiple runs in the maze.
+    Be able to be started and stopped via a dashboard.
+    Real-time display the time for the attempt on the dashboard.
 
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
+Hardware:
 
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
-
-Below is short explanation of remaining files in the project folder.
-
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+    Atmega328p: 1 piece
+    Hc-Sr04 Ultrasonic sensor: 3 pieces
+    TCS3200 color sensor: 1 piece
+    Servo MSR-1.3-9 360°: 2 pieces
+    On/Off button: 1 piece
+    LED: 1 piece
+    Wheels for servo: 2 pieces
+    360° rotating front wheel: 1 piece
+    Half breadboard: 1 piece
+    Mini breadboard: 1 pieces.
+    Lego chassi
