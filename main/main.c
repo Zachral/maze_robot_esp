@@ -50,5 +50,8 @@ void app_main(void)
     // ESP_LOGI("Sensor reading: ", "Front sensor = %d     Left Sensor= %d     Right sensor = %d", frontDistance, leftDistance, rightDistance); 
     // vTaskDelay(pdMS_TO_TICKS(500)); 
     drive_forward(left_servo, right_servo);
+    
+    
+    
     };
 }
