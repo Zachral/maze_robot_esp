@@ -43,6 +43,7 @@ void app_main(void)
     uint8_t frontDistance = 90, leftDistance = 50, rightDistance = 50;
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
+   
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
     while (1){
     // read_ultrasonic_sensors(&frontSensor, &leftSensor, &rightSensor, &frontDistance, &leftDistance, &rightDistance);
