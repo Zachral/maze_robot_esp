@@ -19,3 +19,25 @@ esp_err_t color_sensor_init(){
 
 return ESP_OK; 
 }
+
+void set_color_to_detect(uint8_t color){
+    switch(color){
+        case RED: 
+            //sets sensor to detect red
+            gpio_set_level(COLOR_SENSOR_S2_PIN, LOW);
+            gpio_set_level(COLOR_SENSOR_S3_PIN, LOW);
+            break;
+        case GREEN:
+            //sets sensor to detect green
+            gpio_set_level(COLOR_SENSOR_S2_PIN, HIGH);
+            gpio_set_level(COLOR_SENSOR_S3_PIN, HIGH); 
+            break; 
+        case BLUE:
+            //sets sensor to detect green
+            gpio_set_level(COLOR_SENSOR_S2_PIN, LOW);
+            gpio_set_level(COLOR_SENSOR_S3_PIN, HIGH); 
+            break; 
+        default:
+            break; 
+    }
+}

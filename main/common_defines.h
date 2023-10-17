@@ -8,4 +8,8 @@
 #define RIGHT   2
 #define LOW     0
 #define HIGH    1
+#define RED     1
+#define GREEN   2
+#define BLUE    3
+
 #endif 
