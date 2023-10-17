@@ -9,6 +9,7 @@
 #include "esp_log.h"
 #include "driver/mcpwm_prelude.h"
 #include "servo.h"
+#include "common_defines.h"
 
 
 static const char *TAG = "example";
@@ -175,18 +176,18 @@ void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right
     }
 }
 
-// void stabilize(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator,uint8_t side){
-//     switch (side){
-//     case LEFT:
-//         ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*2)));
-//         ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *1.5))));
-//         break;
-//     case RIGHT:
-//         ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*1.5)));
-//         ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *2))));
-//     default:
-//         drive_forward(); 
-//         break;
-//     }
-// return; 
-// }
+void stabilize(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator,uint8_t side){
+    switch (side){
+    case LEFT:
+        ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*2)));
+        ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *1.5))));
+        break;
+    case RIGHT:
+        ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*1.5)));
+        ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *2))));
+    default:
+        drive_forward(left_servo_comparator, right_servo_comparator); 
+        break;
+    }
+return; 
+}

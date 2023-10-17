@@ -7,6 +7,8 @@
 #include "ultrasonic.h"
 #include "servo.h"
 #include "driver/mcpwm_prelude.h"
+#include "common_defines.h"
+#include "led.h"
 
 //#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
 //#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
@@ -18,13 +20,13 @@
 //right echo pin 33
 //servo left 15
 //servo right 13
-//color sensor out 2
+//color sensor out 21
 //color sensor s2 4
 //color sensor s3 16
 //color sensor s0 26
 //color sensor s1 27
-//button 12
-//led led 14 
+//button 14
+//led led 25
 
 
 //servo pin left 
@@ -43,15 +45,15 @@ void app_main(void)
     uint8_t frontDistance = 90, leftDistance = 50, rightDistance = 50;
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
-   
+    led_init();
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
     while (1){
     // read_ultrasonic_sensors(&frontSensor, &leftSensor, &rightSensor, &frontDistance, &leftDistance, &rightDistance);
     // ESP_LOGI("Sensor reading: ", "Front sensor = %d     Left Sensor= %d     Right sensor = %d", frontDistance, leftDistance, rightDistance); 
     // vTaskDelay(pdMS_TO_TICKS(500)); 
-    drive_forward(left_servo, right_servo);
-    
-    
+
+    flash_led(); 
+    vTaskDelay(pdMS_TO_TICKS(500)); 
     
     };
 }
