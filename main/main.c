@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <esp_err.h>
@@ -9,6 +10,7 @@
 #include "driver/mcpwm_prelude.h"
 #include "common_defines.h"
 #include "led.h"
+#include "button.h"
 
 //#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
 //#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
@@ -45,15 +47,23 @@ void app_main(void)
     uint8_t frontDistance = 90, leftDistance = 50, rightDistance = 50;
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
+    bool isPressed = false; 
+    int lastState = LOW; 
     led_init();
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
-    while (1){
+    // button_init(); 
+    // while(!isPressed){
+    //     int currentState = gpio_get_level(BUTTON_PIN);
+    //     button_click(&isPressed, &currentState, &lastState); 
+    //     // printf("In bool loop\n");
+    // }
+    xTaskCreate(button_click(&isPressed), "Button press", 4096, NULL, 0, NULL); 
+    while (isPressed){
     // read_ultrasonic_sensors(&frontSensor, &leftSensor, &rightSensor, &frontDistance, &leftDistance, &rightDistance);
     // ESP_LOGI("Sensor reading: ", "Front sensor = %d     Left Sensor= %d     Right sensor = %d", frontDistance, leftDistance, rightDistance); 
     // vTaskDelay(pdMS_TO_TICKS(500)); 
+    light_led(); 
 
-    flash_led(); 
-    vTaskDelay(pdMS_TO_TICKS(500)); 
     
     };
 }
