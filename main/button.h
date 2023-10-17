@@ -3,6 +3,5 @@
 
 #define BUTTON_PIN  14
 
-esp_err_t button_init();
 esp_err_t button_click(bool *isPressed);
 #endif
