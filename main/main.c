@@ -11,6 +11,7 @@
 #include "common_defines.h"
 #include "led.h"
 #include "button.h"
+#include "color_sensor.h"
 
 //#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
 //#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
@@ -50,15 +51,17 @@ void app_main(void)
     bool isPressed = false; 
     led_init();
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
+    color_sensor_init(); 
 
     //runs until button is pressed.
-    button_click(&isPressed); 
-    while (isPressed){
-    // read_ultrasonic_sensors(&frontSensor, &leftSensor, &rightSensor, &frontDistance, &leftDistance, &rightDistance);
-    // ESP_LOGI("Sensor reading: ", "Front sensor = %d     Left Sensor= %d     Right sensor = %d", frontDistance, leftDistance, rightDistance); 
-    // vTaskDelay(pdMS_TO_TICKS(500)); 
-    if(gpio_get_level(LED_PIN) == 0) light_led();  
+    // button_click(&isPressed); 
+    // while (isPressed){
+    // // read_ultrasonic_sensors(&frontSensor, &leftSensor, &rightSensor, &frontDistance, &leftDistance, &rightDistance);
+    // // ESP_LOGI("Sensor reading: ", "Front sensor = %d     Left Sensor= %d     Right sensor = %d", frontDistance, leftDistance, rightDistance); 
+    // // vTaskDelay(pdMS_TO_TICKS(500)); 
+    // if(gpio_get_level(LED_PIN) == 0) light_led();  
+     while (1){
+        detect_red_color();
+    }
     
-    
-    };
 }

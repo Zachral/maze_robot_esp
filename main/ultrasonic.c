@@ -152,7 +152,7 @@ esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_dis
 };
 
 esp_err_t read_ultrasonic_sensors(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor,
-                                u_int8_t *frontDistance, u_int8_t *lefDistance, u_int8_t *righDistance){
+                                uint8_t *frontDistance, uint8_t *lefDistance, uint8_t *righDistance){
     CHECK(ultrasonic_measure_cm(frontSensor,400,frontDistance));
     CHECK(ultrasonic_measure_cm(leftSensor,400,lefDistance));
     CHECK(ultrasonic_measure_cm(rightSensor,400,righDistance));
