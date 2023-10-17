@@ -1,5 +1,6 @@
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_err.h"
 #include "color_sensor.h"
 #include "common_defines.h"
@@ -70,4 +71,41 @@ uint32_t read_color_sensor(){
 
 long Convert_input_frequency(long frequency, long in_min, long in_max, long out_min, long out_max) {
   return (frequency - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+int detect_red_color(){
+    int redFrequency = 0, greenFrequency = 0, blueFrequency = 0, redColor = 0,  greenColor = 0, blueColor = 0; 
+
+    set_color_to_detect(RED);
+    redFrequency = read_color_sensor(); 
+    redColor = Convert_input_frequency(redFrequency,410,830,255,0);
+   // printf("redFrequency = %d   red color = %d\n", redFrequency, redColor); 
+    vTaskDelay(pdMS_TO_TICKS(100)); 
+
+    set_color_to_detect(GREEN);
+    greenFrequency = read_color_sensor();
+    greenColor = Convert_input_frequency(greenFrequency, 660, 1220, 255,0); 
+    // printf("green Frequency = %d   green color = %d\n", greenFrequency, greenColor); 
+    vTaskDelay(pdMS_TO_TICKS(100)); 
+
+    set_color_to_detect(BLUE); 
+    blueFrequency = read_color_sensor();
+    blueColor = Convert_input_frequency(blueFrequency, 610, 810, 255, 0);
+     //printf("blue Frequency = %d   blue color = %d\n", blueFrequency, blueColor); 
+    vTaskDelay(pdMS_TO_TICKS(100)); 
+
+    if(greenColor > redColor && greenColor > blueColor){ 
+        printf("GREEN DETECTED\n");
+        return 0;
+    }
+    if(blueColor > redColor && blueColor > greenColor){
+        printf("BLUE DETECTED\n");
+        return 0;
+    }
+    if(redColor > greenColor && redColor > blueColor){ 
+        printf("RED DETECTED\n");
+        return 1;
+    }
+    return 0; 
+
 }

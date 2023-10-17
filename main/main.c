@@ -52,7 +52,7 @@ void app_main(void)
     led_init();
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
     color_sensor_init(); 
-    int redFrequency = 0, greenFrequency = 0, blueFrequency = 0; 
+
     //runs until button is pressed.
     // button_click(&isPressed); 
     // while (isPressed){
@@ -61,19 +61,7 @@ void app_main(void)
     // // vTaskDelay(pdMS_TO_TICKS(500)); 
     // if(gpio_get_level(LED_PIN) == 0) light_led();  
      while (1){
-        set_color_to_detect(RED);
-        redFrequency = read_color_sensor(COLOR_SENSOR_OUT_PIN,255); 
-        vTaskDelay(100);
-
-        set_color_to_detect(GREEN);
-        greenFrequency = read_color_sensor(COLOR_SENSOR_OUT_PIN,255);
-        vTaskDelay(100);
-
-        set_color_to_detect(BLUE);
-        blueFrequency = read_color_sensor(COLOR_SENSOR_OUT_PIN,255);
-        vTaskDelay(100); 
-
-        printf("R = %d, G = %d, B = %d\n", redFrequency, greenFrequency, blueFrequency);
+        detect_red_color();
     }
     
 }

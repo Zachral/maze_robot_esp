@@ -12,7 +12,8 @@
 esp_err_t color_sensor_init();
 void set_color_to_detect(uint8_t color);
 uint32_t read_color_sensor(); 
-long Convert_input_frequency(long frequency, long in_min, long in_max, long out_min, long out_max); 
+long Convert_input_frequency(long frequency, long in_min, long in_max, long out_min, long out_max);
+int detect_red_color();  
 
 
 #endif
