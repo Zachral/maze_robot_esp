@@ -14,10 +14,10 @@ esp_err_t color_sensor_init(){
     //set out-pin to input
     ESP_ERROR_CHECK(gpio_set_direction(COLOR_SENSOR_OUT_PIN, GPIO_MODE_INPUT));
 
-    //set the scaling
+    //set the scaling to 20%
     ESP_ERROR_CHECK(gpio_set_level(COLOR_SENSOR_S0_PIN, HIGH));
-    ESP_ERROR_CHECK(gpio_set_level(COLOR_SENSOR_S1_PIN, LOW));
-
+    ESP_ERROR_CHECK(gpio_set_level(COLOR_SENSOR_S1_PIN, HIGH));
+    printf("Sensor set up\n");
 return ESP_OK; 
 }
 
@@ -43,26 +43,29 @@ void set_color_to_detect(uint8_t color){
     }
 }
 
-uint32_t read_color_sensor(uint8_t outPIN, uint8_t timeout){
-    uint32_t pulseWidth = 0, maxIterations = pdMS_TO_TICKS(timeout) / 16; 
+uint32_t read_color_sensor(){
+    uint32_t pulseWidth = 0, maxIterations = pdMS_TO_TICKS(255) / 16; 
     uint8_t iterations = 0;
-    
+    //printf("Max iterations = %ld\n", maxIterations);
     //wait for the pulse before to end
     while(!gpio_get_level(COLOR_SENSOR_OUT_PIN)){
-        if(iterations++ == maxIterations) return 0;
+        //if(iterations++ == maxIterations) return 0;
+        //printf("Waiting for signal to end    %d\n", iterations); 
     }
 
     //wait for signal to go low
     while(gpio_get_level(COLOR_SENSOR_OUT_PIN)){
-        if(iterations++ == maxIterations) return 0;
+        //if(iterations++ == maxIterations) return 0;
+       // printf("Waiting for signal to go low    %d\n", iterations); 
     }
 
     //start reading the low signal until it goes high
     while(!gpio_get_level(COLOR_SENSOR_OUT_PIN)){
         pulseWidth++; 
+       // printf("reading!   %ld\n", pulseWidth); 
     }
 
-    return pdTICKS_TO_MS(pulseWidth * 21 +16);
+    return pdTICKS_TO_MS(pulseWidth);
 }
 
 long Convert_input_frequency(long frequency, long in_min, long in_max, long out_min, long out_max) {
