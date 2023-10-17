@@ -1,4 +1,5 @@
 #include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
 #include "esp_err.h"
 #include "color_sensor.h"
 #include "common_defines.h"
@@ -40,4 +41,30 @@ void set_color_to_detect(uint8_t color){
         default:
             break; 
     }
+}
+
+uint32_t read_color_sensor(uint8_t outPIN, uint8_t timeout){
+    uint32_t pulseWidth = 0, maxIterations = pdMS_TO_TICKS(timeout) / 16; 
+    uint8_t iterations = 0;
+    
+    //wait for the pulse before to end
+    while(!gpio_get_level(COLOR_SENSOR_OUT_PIN)){
+        if(iterations++ == maxIterations) return 0;
+    }
+
+    //wait for signal to go low
+    while(gpio_get_level(COLOR_SENSOR_OUT_PIN)){
+        if(iterations++ == maxIterations) return 0;
+    }
+
+    //start reading the low signal until it goes high
+    while(!gpio_get_level(COLOR_SENSOR_OUT_PIN)){
+        pulseWidth++; 
+    }
+
+    return pdTICKS_TO_MS(pulseWidth * 21 +16);
+}
+
+long Convert_input_frequency(long frequency, long in_min, long in_max, long out_min, long out_max) {
+  return (frequency - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
