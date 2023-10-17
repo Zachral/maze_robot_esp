@@ -21,14 +21,15 @@ It is desirable that the robot would:
 
 Hardware:
 
-    Atmega328p: 1 piece
+    Esp 32: 1 piece
     Hc-Sr04 Ultrasonic sensor: 3 pieces
     TCS3200 color sensor: 1 piece
     Servo MSR-1.3-9 360°: 2 pieces
+    MPU6050 3-axis gyroscope/accelerometer
     On/Off button: 1 piece
     LED: 1 piece
     Wheels for servo: 2 pieces
     360° rotating front wheel: 1 piece
     Half breadboard: 1 piece
-    Mini breadboard: 1 pieces.
+    Mini breadboard: 2 pieces.
     Lego chassi
