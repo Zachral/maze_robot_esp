@@ -62,12 +62,22 @@ typedef struct
 } ultrasonic_sensor_t;
 
 
+typedef struct 
+{
+    ultrasonic_sensor_t frontSensor;
+    ultrasonic_sensor_t leftSensor;
+    ultrasonic_sensor_t rightSensor; 
+    uint32_t frontDistance;
+    uint32_t leftDistance;
+    uint32_t rightDistance;
+}ultrasonic_sensor_parameters_t;
+
 /**
  * @brief Init ranging module
  *
  * @return `ESP_OK` on success
  */
-esp_err_t ultrasonic_init(ultrasonic_sensor_t *frontSensor,ultrasonic_sensor_t *leftSensor, ultrasonic_sensor_t *rightSensor); 
+esp_err_t ultrasonic_init(ultrasonic_sensor_parameters_t *UltrasonicSensorParameters); 
 
 /**
  * @brief Measure time between ping and echo
@@ -108,9 +118,9 @@ esp_err_t ultrasonic_measure(const ultrasonic_sensor_t *dev, float max_distance,
  */
 esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_distance, uint32_t *distance);
 
-
-esp_err_t read_ultrasonic_sensors(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor,
-                                uint8_t *frontDistance, uint8_t *lefDistance, uint8_t *righDistance); 
+void read_ultrasonic_sensors(void* pvParameters); 
+// esp_err_t read_ultrasonic_sensors(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor,
+//                                 uint8_t *frontDistance, uint8_t *lefDistance, uint8_t *righDistance); 
 #ifdef __cplusplus
 }
 #endif
