@@ -39,34 +39,32 @@ static const char *MPU6050 = "mpu6050";
 
 void app_main(void)
 {
-    ultrasonic_sensor_t frontSensor;
-    ultrasonic_sensor_t leftSensor;
-    ultrasonic_sensor_t rightSensor; 
-    uint8_t frontDistance = 90, leftDistance = 50, rightDistance = 50;
+    ultrasonic_sensor_parameters_t UltrasonicSensorParameters; 
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
     mpu6050_dev_t mpu6050Sensor = { 0 };
     mpu6050_rotation_t rotation = { 0,0,0 };
     double gyroErrorZ  = 0.0, yaw = 0.0;
     uint64_t previousTime = esp_timer_get_time(); 
-    TaskHandle_t flashLED = NULL; 
+    TaskHandle_t flashLEDHandle = NULL; 
+    TaskHandle_t ultrasonicSensorHandle = NULL; 
     bool isPressed = false; 
     led_init();
-    xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLED);
-    ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
+    xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle);
+    ultrasonic_init(&UltrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
     calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
-    vTaskDelete(flashLED);
+    vTaskDelete(flashLEDHandle);
     light_led(); 
     //runs until button is pressed.
     button_click(&isPressed); 
+    xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &UltrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
     turn_of_led(); 
      while (isPressed){
-        drive_forward(left_servo, right_servo); 
-        printf("Forward!\n");
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        turn_left(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
+       printf(" front sensor = %ld      left sensor = %ld       Right sensor = %ld\n", 
+                UltrasonicSensorParameters.frontDistance, UltrasonicSensorParameters.leftDistance, UltrasonicSensorParameters.rightDistance); 
+                vTaskDelay(pdMS_TO_TICKS(20));  
     }
     
 }
