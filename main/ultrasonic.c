@@ -69,7 +69,13 @@ static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 #define CHECK(x) do { esp_err_t __; if ((__ = x) != ESP_OK) return __; } while (0)
 #define RETURN_CRITICAL(RES) do { PORT_EXIT_CRITICAL; return RES; } while(0)
 
-esp_err_t ultrasonic_init(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor ){
+esp_err_t ultrasonic_init(ultrasonic_sensor_t *frontSensor,ultrasonic_sensor_t *leftSensor, ultrasonic_sensor_t *rightSensor ){
+        frontSensor->trigger_pin = GPIO_NUM_16;
+        frontSensor->echo_pin = GPIO_NUM_17;
+        leftSensor->trigger_pin = GPIO_NUM_18;
+        leftSensor->echo_pin = GPIO_NUM_19;
+        rightSensor->trigger_pin = GPIO_NUM_21;
+        rightSensor->echo_pin = GPIO_NUM_22; 
 
         CHECK(gpio_set_direction(frontSensor->trigger_pin, GPIO_MODE_OUTPUT));
         CHECK(gpio_set_direction(frontSensor->echo_pin, GPIO_MODE_INPUT));

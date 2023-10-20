@@ -942,9 +942,9 @@ esp_err_t mpu6050_get_rotation_axis(mpu6050_dev_t *dev, mpu6050_axis_t axis, flo
     return ESP_OK;
 }
 
-esp_err_t mpu6050_get_motion(mpu6050_dev_t *dev, mpu6050_acceleration_t *accel, mpu6050_rotation_t *gyro)
+esp_err_t mpu6050_get_motion(mpu6050_dev_t *dev,  mpu6050_rotation_t *gyro)
 {
-    CHECK(mpu6050_get_acceleration(dev, accel));
+    //CHECK(mpu6050_get_acceleration(dev, accel));
     CHECK(mpu6050_get_rotation(dev, gyro));
     return ESP_OK;
 }
@@ -1441,7 +1441,7 @@ esp_err_t mpu6050_self_test(mpu6050_dev_t *dev, float *destination)
 }
 
 
- void get_mpu6050_reading(mpu6050_dev_t dev,  mpu6050_acceleration_t *accel, mpu6050_rotation_t *rotation)
+ void get_mpu6050_reading(mpu6050_dev_t dev, mpu6050_rotation_t *rotation)
 {
    
     ESP_ERROR_CHECK(mpu6050_init_desc(&dev, MPU6050_I2C_ADDRESS_LOW, 0, SDA_GPIO, SCL_GPIO));
@@ -1460,17 +1460,17 @@ esp_err_t mpu6050_self_test(mpu6050_dev_t *dev, float *destination)
 
     ESP_ERROR_CHECK(mpu6050_init(&dev));
  
-    ESP_ERROR_CHECK(mpu6050_get_motion(&dev, accel, rotation));
+    ESP_ERROR_CHECK(mpu6050_get_motion(&dev, rotation));
 
 
     vTaskDelay(pdMS_TO_TICKS(100));
     return; 
 }
 
-void calibrate_mpu6050(mpu6050_dev_t dev,  mpu6050_acceleration_t *accel, mpu6050_rotation_t *rotation, double *gyroErrorZ){
+void calibrate_mpu6050(mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ){
     for(int i = 0; i < 200; i++){ 
         printf("%d\n", i);
-        get_mpu6050_reading(dev, accel, rotation);
+        get_mpu6050_reading(dev, rotation);
         if(rotation == NULL){
             printf("NULL POINTER!");
         }else{
@@ -1483,12 +1483,12 @@ void calibrate_mpu6050(mpu6050_dev_t dev,  mpu6050_acceleration_t *accel, mpu605
     return; 
 }
 
-void calculate_yaw(mpu6050_dev_t dev,  mpu6050_acceleration_t *accel, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
+void calculate_yaw(mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
     uint64_t currentTime, elsapsedTime; 
         currentTime = esp_timer_get_time(); 
         elsapsedTime = (currentTime - *previousTime); 
         *previousTime = currentTime;
-        get_mpu6050_reading(dev, accel, rotation);
+        get_mpu6050_reading(dev, rotation);
         rotation->z = *gyroErrorZ > 0 ?  rotation->z - *gyroErrorZ : rotation->z + *gyroErrorZ; 
         *yaw += (rotation->z/GYRO_SENSITIVITY) * (elsapsedTime/ 10000); // gives tha angel of rotation
     return; 

@@ -67,7 +67,7 @@ typedef struct
  *
  * @return `ESP_OK` on success
  */
-esp_err_t ultrasonic_init(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor); 
+esp_err_t ultrasonic_init(ultrasonic_sensor_t *frontSensor,ultrasonic_sensor_t *leftSensor, ultrasonic_sensor_t *rightSensor); 
 
 /**
  * @brief Measure time between ping and echo
@@ -110,7 +110,7 @@ esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_dis
 
 
 esp_err_t read_ultrasonic_sensors(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor,
-                                u_int8_t *frontDistance, u_int8_t *lefDistance, u_int8_t *righDistance); 
+                                uint8_t *frontDistance, uint8_t *lefDistance, uint8_t *righDistance); 
 #ifdef __cplusplus
 }
 #endif
