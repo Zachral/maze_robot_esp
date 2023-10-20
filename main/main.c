@@ -54,7 +54,7 @@ void app_main(void)
     ultrasonic_init(&UltrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
-    //calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
+    calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
     vTaskDelete(flashLEDHandle);
     light_led(); 
     //runs until button is pressed.
@@ -63,7 +63,8 @@ void app_main(void)
     turn_of_led(); 
      while (isPressed){
        printf(" front sensor = %ld      left sensor = %ld       Right sensor = %ld\n", 
-                UltrasonicSensorParameters.frontDistance, UltrasonicSensorParameters.leftDistance, UltrasonicSensorParameters.rightDistance);  
+                UltrasonicSensorParameters.frontDistance, UltrasonicSensorParameters.leftDistance, UltrasonicSensorParameters.rightDistance); 
+                vTaskDelay(pdMS_TO_TICKS(20));  
     }
     
 }

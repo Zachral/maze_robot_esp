@@ -75,8 +75,8 @@ esp_err_t ultrasonic_init(ultrasonic_sensor_parameters_t *ultrasonicSensorParame
         ultrasonicSensorParameters->frontSensor.echo_pin = GPIO_NUM_23;
         ultrasonicSensorParameters->leftSensor.trigger_pin = GPIO_NUM_5;
         ultrasonicSensorParameters->leftSensor.echo_pin = GPIO_NUM_17;
-        ultrasonicSensorParameters->rightSensor.trigger_pin = GPIO_NUM_33;
-        ultrasonicSensorParameters->rightSensor.echo_pin = GPIO_NUM_32; 
+        ultrasonicSensorParameters->rightSensor.trigger_pin = GPIO_NUM_32;
+        ultrasonicSensorParameters->rightSensor.echo_pin = GPIO_NUM_33; 
 
         ultrasonicSensorParameters->frontDistance = 90;
         ultrasonicSensorParameters->leftDistance = 50;
