@@ -47,8 +47,8 @@ void app_main(void)
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
     mpu6050_dev_t dev = { 0 };
     mpu6050_rotation_t rotation = { 0,0,0 };
-    uint64_t previousTime = esp_timer_get_time(); 
     double gyroErrorZ  = 0.0, yaw = 0.0;
+    uint64_t previousTime = esp_timer_get_time(); 
     bool isPressed = false; 
     led_init();
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 

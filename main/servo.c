@@ -154,7 +154,7 @@ void drive_backwards(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handl
     }
 
 void turn_left(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
-    *yaw = 0.0; 
+    *yaw = 0.0; //reset yaw as the degree of turn is only relevant in comparision to starting direction.
     printf("turn left!\n");
     while(*yaw < 70){
         calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
@@ -166,9 +166,15 @@ void turn_left(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t ri
     
 }
 
-void turn_right(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator){
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2)));
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
+void turn_right(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
+    *yaw = 0.0; //reset yaw as the degree of turn is only relevant in comparision to starting direction.
+    printf("turn left!\n");
+    while (*yaw > -70){
+        calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
+        printf("Yaw = %.4f\n", *yaw);
+        ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2)));
+        ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
+    }
 return; 
 }
 
