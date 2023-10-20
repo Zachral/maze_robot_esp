@@ -18,7 +18,9 @@ void turn_of_led(){
     return; 
 }
 
-void flash_led(){
+TaskFunction_t flash_led(void* pvParameters){
+    while(1){
     gpio_get_level(LED_PIN) == HIGH ? gpio_set_level(LED_PIN, LOW) : gpio_set_level(LED_PIN, HIGH);
-    return; 
-    }  
+    vTaskDelay(pdMS_TO_TICKS(500)); 
+    }
+}  

@@ -49,17 +49,19 @@ void app_main(void)
     mpu6050_rotation_t rotation = { 0,0,0 };
     double gyroErrorZ  = 0.0, yaw = 0.0;
     uint64_t previousTime = esp_timer_get_time(); 
+    TaskHandle_t flashLED = NULL; 
     bool isPressed = false; 
     led_init();
+    xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLED);
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
     calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
-    light_led(); // to know when the calibration is done
-
+    vTaskDelete(flashLED);
+    light_led(); 
     //runs until button is pressed.
     button_click(&isPressed); 
-  
+    turn_of_led(); 
      while (isPressed){
         drive_forward(left_servo, right_servo); 
         printf("Forward!\n");

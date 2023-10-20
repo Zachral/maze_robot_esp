@@ -6,7 +6,8 @@
         "ultrasonic.h": "c",
         "stdint.h": "c",
         "freertos.h": "c",
-        "common_defines.h": "c"
+        "common_defines.h": "c",
+        "freertosconfig.h": "c"
     },
     "idf.openOcdConfigs": [
         "board/esp32-wrover-kit-3.3v.cfg"
