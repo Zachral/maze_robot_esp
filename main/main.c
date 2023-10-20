@@ -5,6 +5,8 @@
 #include <freertos/task.h>
 #include <esp_err.h>
 #include <esp_log.h>
+#include <i2cdev.h> 
+#include <esp_timer.h>
 #include "ultrasonic.h"
 #include "servo.h"
 #include "driver/mcpwm_prelude.h"
@@ -12,6 +14,7 @@
 #include "led.h"
 #include "button.h"
 #include "color_sensor.h"
+#include "mpu6050.h"
 
 //#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
 //#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
@@ -32,7 +35,7 @@
 //led led 25
 
 
-//servo pin left 
+static const char *MPU6050 = "mpu6050";
 
 void app_main(void)
 {
@@ -48,10 +51,18 @@ void app_main(void)
     uint8_t frontDistance = 90, leftDistance = 50, rightDistance = 50;
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
+    mpu6050_dev_t dev = { 0 };
+    mpu6050_acceleration_t accel = { 0,0,0 };
+    mpu6050_rotation_t rotation = { 0,0,0 };
+    uint64_t previousTime = esp_timer_get_time(); 
+    double gyroErrorZ  = 0.0, yaw = 0.0;
     bool isPressed = false; 
     led_init();
     ultrasonic_init(&frontSensor, &leftSensor, &rightSensor); 
     color_sensor_init(); 
+    ESP_ERROR_CHECK(i2cdev_init());
+    calibrate_mpu6050(dev, &accel, &rotation, &gyroErrorZ); 
+
 
     //runs until button is pressed.
     // button_click(&isPressed); 
@@ -61,7 +72,8 @@ void app_main(void)
     // // vTaskDelay(pdMS_TO_TICKS(500)); 
     // if(gpio_get_level(LED_PIN) == 0) light_led();  
      while (1){
-        detect_red_color();
+    calculate_yaw(dev, &accel, &rotation, &gyroErrorZ, &yaw, &previousTime);
+    ESP_LOGI(MPU6050, "Yaw = %.4f", yaw); 
     }
     
 }
