@@ -65,6 +65,7 @@ void app_main(void)
       drive_forward(&left_servo, &right_servo); 
 
       if(ultrasonicSensorParameters.frontDistance < 9){
+        vTaskSuspend(&ultrasonicSensorHandle); 
         drive_slowly_forward(&left_servo, &right_servo); 
         if(detect_red_color()){
           light_led();
@@ -72,12 +73,15 @@ void app_main(void)
         }else{
           drive_backwards(left_servo,right_servo); 
           u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance);
-          reset_ultrasonic_sensor(); 
+          reset_ultrasonic_sensor(&ultrasonicSensorParameters); 
+          vTaskResume(&ultrasonicSensorHandle); 
         }
 
         if(ultrasonicSensorParameters.leftDistance > 20 || ultrasonicSensorParameters.rightDistance > 20){
+          vTaskSuspend(&ultrasonicSensorHandle); 
           decide_path(); 
-          reset_ultrasonic_sensors(); 
+          reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+          vTaskResume(&ultrasonicSensorHandle); 
         }
       }
     }

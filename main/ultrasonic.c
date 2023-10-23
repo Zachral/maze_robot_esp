@@ -78,9 +78,9 @@ esp_err_t ultrasonic_init(ultrasonic_sensor_parameters_t *ultrasonicSensorParame
         ultrasonicSensorParameters->rightSensor.trigger_pin = GPIO_NUM_32;
         ultrasonicSensorParameters->rightSensor.echo_pin = GPIO_NUM_33; 
 
-        ultrasonicSensorParameters->frontDistance = 90;
-        ultrasonicSensorParameters->leftDistance = 50;
-        ultrasonicSensorParameters->rightDistance = 50; 
+        ultrasonicSensorParameters->frontDistance = 9;
+        ultrasonicSensorParameters->leftDistance = 5;
+        ultrasonicSensorParameters->rightDistance = 5; 
 
         CHECK(gpio_set_direction(ultrasonicSensorParameters->frontSensor.trigger_pin, GPIO_MODE_OUTPUT));
         CHECK(gpio_set_direction(ultrasonicSensorParameters->frontSensor.echo_pin, GPIO_MODE_INPUT));
@@ -187,10 +187,9 @@ void read_ultrasonic_sensors(void* pvParameters){
     }
 }
 
-// esp_err_t read_ultrasonic_sensors(const ultrasonic_sensor_t *frontSensor,const ultrasonic_sensor_t *leftSensor, const ultrasonic_sensor_t *rightSensor,
-//                                 uint8_t *frontDistance, uint8_t *lefDistance, uint8_t *righDistance){
-//     CHECK(ultrasonic_measure_cm(frontSensor,400,frontDistance));
-//     CHECK(ultrasonic_measure_cm(leftSensor,400,lefDistance));
-//     CHECK(ultrasonic_measure_cm(rightSensor,400,righDistance));
-//     return ESP_OK; 
-// }
+void reset_ultrasonic_sensors(ultrasonic_sensor_parameters_t *ultrasonicSensorParameters){
+    ultrasonicSensorParameters->frontDistance = 9;
+    ultrasonicSensorParameters->leftDistance = 5;
+    ultrasonicSensorParameters->rightDistance = 5; 
+    return; 
+}

@@ -119,6 +119,7 @@ esp_err_t ultrasonic_measure(const ultrasonic_sensor_t *dev, float max_distance,
 esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_distance, uint32_t *distance);
 
 void read_ultrasonic_sensors(void* pvParameters); 
+void reset_ultrasonic_sensors(ultrasonic_sensor_parameters_t *ultrasonicSensorParameters); 
 
 #ifdef __cplusplus
 }
