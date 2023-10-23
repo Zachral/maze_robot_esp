@@ -56,9 +56,10 @@ void app_main(void)
     ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
-    calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
+    //calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
     vTaskDelete(flashLEDHandle);
     light_led(); 
+    drive_forward(&left_servo, &right_servo); 
     //runs until button is pressed.
     button_click(&isPressed); 
     xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &ultrasonicSensorParameters, 5, &ultrasonicSensorHandle); 

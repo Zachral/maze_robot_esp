@@ -13,7 +13,8 @@
 #include "mpu6050.h"
 
 
-static const char *TAG = "example";
+static const char *L = "Left servo";
+static const char *R = "Right servo"; 
  
 int servoSpeed = 40;
 
@@ -24,7 +25,7 @@ static inline uint32_t run_servos_at_speed(int servoSpeed){
 
 mcpwm_cmpr_handle_t left_servo_init(){
     /*Initilizes left servo*/
-    ESP_LOGI(TAG, "Create timer and operator");
+    ESP_LOGI(L, "Create timer and operator");
     mcpwm_timer_handle_t left_servo_timer = NULL;
     mcpwm_timer_config_t left_servo_timer_config = {
         .group_id = 0,
@@ -41,10 +42,10 @@ mcpwm_cmpr_handle_t left_servo_init(){
     };
     ESP_ERROR_CHECK(mcpwm_new_operator(&left_servo_operator_config, &left_servo_operator));
 
-    ESP_LOGI(TAG, "Connect timer and operator");
+    ESP_LOGI(L, "Connect timer and operator");
     ESP_ERROR_CHECK(mcpwm_operator_connect_timer(left_servo_operator, left_servo_timer));
 
-    ESP_LOGI(TAG, "Create comparator and generator from the operator");
+    ESP_LOGI(L, "Create comparator and generator from the operator");
     mcpwm_cmpr_handle_t left_servo_comparator = NULL;
     mcpwm_comparator_config_t left_servo_comparator_config = {
         .flags.update_cmp_on_tez = true,
@@ -60,7 +61,7 @@ mcpwm_cmpr_handle_t left_servo_init(){
     // set the initial compare value, so that the servo will spin to the center position
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(0)));
 
-    ESP_LOGI(TAG, "Set generator action on timer and compare event");
+    ESP_LOGI(L, "Set generator action on timer and compare event");
     // go high on counter empty
     ESP_ERROR_CHECK(mcpwm_generator_set_action_on_timer_event(left_servo_generator,
                                                               MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH)));
@@ -68,7 +69,7 @@ mcpwm_cmpr_handle_t left_servo_init(){
     ESP_ERROR_CHECK(mcpwm_generator_set_action_on_compare_event(left_servo_generator,
                                                                 MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, left_servo_comparator, MCPWM_GEN_ACTION_LOW)));
 
-    ESP_LOGI(TAG, "Enable and start timer");
+    ESP_LOGI(L, "Enable and start timer");
     ESP_ERROR_CHECK(mcpwm_timer_enable(left_servo_timer));
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(left_servo_timer, MCPWM_TIMER_START_NO_STOP));
 
@@ -77,7 +78,7 @@ mcpwm_cmpr_handle_t left_servo_init(){
 
 mcpwm_cmpr_handle_t right_servo_init(){
     /*Initilizes Right servo*/
-    ESP_LOGI(TAG, "Create timer and operator");
+    ESP_LOGI(R, "Create timer and operator");
     mcpwm_timer_handle_t right_servo_timer = NULL;
     mcpwm_timer_config_t right_servo_timer_config = {
         .group_id = 1,
@@ -94,10 +95,10 @@ mcpwm_cmpr_handle_t right_servo_init(){
     };
     ESP_ERROR_CHECK(mcpwm_new_operator(&right_servo_operator_config, &right_servo_operator));
 
-    ESP_LOGI(TAG, "Connect timer and operator");
+    ESP_LOGI(R, "Connect timer and operator");
     ESP_ERROR_CHECK(mcpwm_operator_connect_timer(right_servo_operator, right_servo_timer));
 
-    ESP_LOGI(TAG, "Create comparator and generator from the operator");
+    ESP_LOGI(R, "Create comparator and generator from the operator");
     mcpwm_cmpr_handle_t right_servo_comparator = NULL;
     mcpwm_comparator_config_t right_servo_comparator_config = {
         .flags.update_cmp_on_tez = true,
@@ -110,10 +111,10 @@ mcpwm_cmpr_handle_t right_servo_init(){
     };
     ESP_ERROR_CHECK(mcpwm_new_generator(right_servo_operator, &right_servo_generator_config, &right_servo_generator));
 
-    // set the initial compare value, so that the servo will spin to the center position
-   // ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(0)));
+    //set the initial compare value, so that the servo will spin to the center position
+    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(0)));
 
-    ESP_LOGI(TAG, "Set generator action on timer and compare event");
+    ESP_LOGI(R, "Set generator action on timer and compare event");
     // go high on counter empty
     ESP_ERROR_CHECK(mcpwm_generator_set_action_on_timer_event(right_servo_generator,
                                                               MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH)));
@@ -121,7 +122,7 @@ mcpwm_cmpr_handle_t right_servo_init(){
     ESP_ERROR_CHECK(mcpwm_generator_set_action_on_compare_event(right_servo_generator,
                                                                 MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, right_servo_comparator, MCPWM_GEN_ACTION_LOW)));
 
-    ESP_LOGI(TAG, "Enable and start timer");
+    ESP_LOGI(R, "Enable and start timer");
     ESP_ERROR_CHECK(mcpwm_timer_enable(right_servo_timer));
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(right_servo_timer, MCPWM_TIMER_START_NO_STOP));
     return right_servo_comparator;
