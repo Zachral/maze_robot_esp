@@ -39,7 +39,7 @@ static const char *MPU6050 = "mpu6050";
 
 void app_main(void)
 {
-    ultrasonic_sensor_parameters_t UltrasonicSensorParameters; 
+    ultrasonic_sensor_parameters_t ultrasonicSensorParameters; 
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
     mpu6050_dev_t mpu6050Sensor = { 0 };
@@ -51,7 +51,7 @@ void app_main(void)
     bool isPressed = false; 
     led_init();
     xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle);
-    ultrasonic_init(&UltrasonicSensorParameters); 
+    ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
     calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
@@ -59,12 +59,27 @@ void app_main(void)
     light_led(); 
     //runs until button is pressed.
     button_click(&isPressed); 
-    xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &UltrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
+    xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &ultrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
     turn_of_led(); 
-     while (isPressed){
-       printf(" front sensor = %ld      left sensor = %ld       Right sensor = %ld\n", 
-                UltrasonicSensorParameters.frontDistance, UltrasonicSensorParameters.leftDistance, UltrasonicSensorParameters.rightDistance); 
-                vTaskDelay(pdMS_TO_TICKS(20));  
+    while (isPressed){
+      drive_forward(&left_servo, &right_servo); 
+
+      if(ultrasonicSensorParameters.frontDistance < 9){
+        drive_slowly_forward(&left_servo, &right_servo); 
+        if(detect_red_color()){
+          light_led();
+          break; 
+        }else{
+          drive_backwards(left_servo,right_servo); 
+          u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance);
+          reset_ultrasonic_sensor(); 
+        }
+
+        if(ultrasonicSensorParameters.leftDistance > 20 || ultrasonicSensorParameters.rightDistance > 20){
+          decide_path(); 
+          reset_ultrasonic_sensors(); 
+        }
+      }
     }
     
 }
