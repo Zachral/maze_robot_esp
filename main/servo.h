@@ -21,6 +21,7 @@ void stop(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_s
 void drive_backwards(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator);
 void turn_left(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime);
 void turn_right(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime);
-void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, uint8_t leftSensor, uint8_t rightSensor ); 
+void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, uint8_t leftSensor, uint8_t rightSensor,mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime); 
+void stabilize(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator,uint8_t side); 
 
 #endif

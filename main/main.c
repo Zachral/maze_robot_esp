@@ -15,6 +15,7 @@
 #include "button.h"
 #include "color_sensor.h"
 #include "mpu6050.h"
+#include "path.h"
 
 //#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
 //#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
@@ -62,26 +63,36 @@ void app_main(void)
     button_click(&isPressed); 
     xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &ultrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
     turn_of_led(); 
+
+
     while (isPressed){
       drive_forward(&left_servo, &right_servo); 
 
+      if(ultrasonicSensorParameters.leftDistance < 4){
+        stabilize(&left_servo, &right_servo, LEFT); 
+      }
+      if(ultrasonicSensorParameters.rightDistance < 4){
+        stabilize(&left_servo, &right_servo, RIGHT); 
+      }
+
       if(ultrasonicSensorParameters.frontDistance < 9){
-        vTaskSuspend(&ultrasonicSensorHandle); 
+        //vTaskSuspend(&ultrasonicSensorHandle); 
         drive_slowly_forward(&left_servo, &right_servo); 
         if(detect_red_color()){
           light_led();
           break; 
         }else{
           drive_backwards(left_servo,right_servo); 
-          u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance);
-          reset_ultrasonic_sensor(&ultrasonicSensorParameters); 
-          vTaskResume(&ultrasonicSensorHandle); 
+          u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance, 
+                mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
+          reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+         // vTaskResume(&ultrasonicSensorHandle); 
         }
 
         if(ultrasonicSensorParameters.leftDistance > 20 || ultrasonicSensorParameters.rightDistance > 20){
-          vTaskSuspend(&ultrasonicSensorHandle); 
+         // vTaskSuspend(&ultrasonicSensorHandle); 
           vTaskDelay(pdMS_TO_TICKS(500)); 
-          driveDirection = decide_path();
+          driveDirection = decide_path(ultrasonicSensorParameters);
           if(driveDirection == LEFT){
             turn_left(&left_servo,&right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
           } 
@@ -92,7 +103,7 @@ void app_main(void)
             turn_right(&left_servo,&right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
           }
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
-          vTaskResume(&ultrasonicSensorHandle); 
+         // vTaskResume(&ultrasonicSensorHandle); 
         }
       }
     }

@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include "common_defines.h"
 #include "ultrasonic.h"
