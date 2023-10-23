@@ -48,6 +48,7 @@ void app_main(void)
     uint64_t previousTime = esp_timer_get_time(); 
     TaskHandle_t flashLEDHandle = NULL; 
     TaskHandle_t ultrasonicSensorHandle = NULL; 
+    uint8_t driveDirection; 
     bool isPressed = false; 
     led_init();
     xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle);
@@ -79,7 +80,17 @@ void app_main(void)
 
         if(ultrasonicSensorParameters.leftDistance > 20 || ultrasonicSensorParameters.rightDistance > 20){
           vTaskSuspend(&ultrasonicSensorHandle); 
-          decide_path(); 
+          vTaskDelay(pdMS_TO_TICKS(500)); 
+          driveDirection = decide_path();
+          if(driveDirection == LEFT){
+            turn_left(&left_servo,&right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
+          } 
+          if(driveDirection == FORWARD){
+            drive_forward(&left_servo, &right_servo);
+          }
+          if(driveDirection == RIGHT){
+            turn_right(&left_servo,&right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
+          }
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
           vTaskResume(&ultrasonicSensorHandle); 
         }
