@@ -7,6 +7,7 @@
 #include <esp_log.h>
 #include <i2cdev.h> 
 #include <esp_timer.h>
+#include <stdbool.h>
 #include "ultrasonic.h"
 #include "servo.h"
 #include "driver/mcpwm_prelude.h"
@@ -15,6 +16,7 @@
 #include "button.h"
 #include "color_sensor.h"
 #include "mpu6050.h"
+#include "path.h"
 
 //#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
 //#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
@@ -39,7 +41,7 @@ static const char *MPU6050 = "mpu6050";
 
 void app_main(void)
 {
-    ultrasonic_sensor_parameters_t UltrasonicSensorParameters; 
+    ultrasonic_sensor_parameters_t ultrasonicSensorParameters; 
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
     mpu6050_dev_t mpu6050Sensor = { 0 };
@@ -48,23 +50,75 @@ void app_main(void)
     uint64_t previousTime = esp_timer_get_time(); 
     TaskHandle_t flashLEDHandle = NULL; 
     TaskHandle_t ultrasonicSensorHandle = NULL; 
+    uint8_t driveDirection; 
     bool isPressed = false; 
     led_init();
     xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle);
-    ultrasonic_init(&UltrasonicSensorParameters); 
+    ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
-    calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
+    //calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
     vTaskDelete(flashLEDHandle);
     light_led(); 
     //runs until button is pressed.
     button_click(&isPressed); 
-    xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &UltrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
+    xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &ultrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
     turn_of_led(); 
-     while (isPressed){
-       printf(" front sensor = %ld      left sensor = %ld       Right sensor = %ld\n", 
-                UltrasonicSensorParameters.frontDistance, UltrasonicSensorParameters.leftDistance, UltrasonicSensorParameters.rightDistance); 
-                vTaskDelay(pdMS_TO_TICKS(20));  
+
+
+    while (isPressed){
+      drive_forward(left_servo, right_servo);  
+      
+      if(ultrasonicSensorParameters.leftDistance < 4){
+        stabilize(left_servo, right_servo, LEFT); 
+      }
+      if(ultrasonicSensorParameters.rightDistance < 4){
+        stabilize(left_servo, right_servo, RIGHT); 
+      }
+
+      if(ultrasonicSensorParameters.frontDistance < 9){
+        TOGGLE_SENSOR_READING_STATE(); 
+        drive_slowly_forward(left_servo, right_servo); 
+        if(detect_red_color()){
+          stop(left_servo, right_servo); 
+          light_led();
+          break; 
+        }else{
+          drive_backwards(left_servo,right_servo); 
+          stop(left_servo,right_servo); 
+          u_turn(left_servo,right_servo, ultrasonicSensorParameters, mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
+          stop(left_servo,right_servo);
+          reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+          ultrasonicSensorParameters.msLastTurn = esp_timer_get_time(); 
+        }
+        TOGGLE_SENSOR_READING_STATE(); 
+      }
+        
+      if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25)){
+        TOGGLE_SENSOR_READING_STATE();
+        printf("Turn detected!\n");
+        vTaskDelay(pdMS_TO_TICKS(2000)); 
+        printf("CHECKING DRIVE PATH!"); 
+        driveDirection = decide_path(ultrasonicSensorParameters);
+        if(driveDirection == LEFT){
+          stop(left_servo,right_servo); 
+          turn_left(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
+          stop(left_servo,right_servo);
+        } 
+        if(driveDirection == FORWARD){
+          drive_forward(left_servo, right_servo);
+        }
+        if(driveDirection == RIGHT){
+          stop(left_servo,right_servo); 
+          turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
+          stop(left_servo,right_servo); 
+        }
+        reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+        ultrasonicSensorParameters.msLastTurn = esp_timer_get_time(); 
+        TOGGLE_SENSOR_READING_STATE();  
+      }
+      
+      vTaskDelay(pdMS_TO_TICKS(10)); 
     }
     
 }

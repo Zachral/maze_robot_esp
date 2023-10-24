@@ -6,6 +6,7 @@
 
 #define LEFT    1
 #define RIGHT   2
+#define FORWARD 3
 #define LOW     0
 #define HIGH    1
 #define RED     1

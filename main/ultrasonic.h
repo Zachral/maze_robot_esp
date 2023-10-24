@@ -43,6 +43,7 @@
 
 #include <driver/gpio.h>
 #include <esp_err.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,6 +52,10 @@ extern "C" {
 #define ESP_ERR_ULTRASONIC_PING         0x200
 #define ESP_ERR_ULTRASONIC_PING_TIMEOUT 0x201
 #define ESP_ERR_ULTRASONIC_ECHO_TIMEOUT 0x202
+#define TOGGLE_SENSOR_READING_STATE() (sensor_reading_state = !sensor_reading_state)
+#define IS_READING_SENSOR              sensor_reading_state
+
+extern bool sensor_reading_state; 
 
 /**
  * Device descriptor
@@ -69,7 +74,8 @@ typedef struct
     ultrasonic_sensor_t rightSensor; 
     uint32_t frontDistance;
     uint32_t leftDistance;
-    uint32_t rightDistance;
+    uint32_t rightDistance; 
+    uint64_t msLastTurn; 
 }ultrasonic_sensor_parameters_t;
 
 /**
@@ -119,6 +125,7 @@ esp_err_t ultrasonic_measure(const ultrasonic_sensor_t *dev, float max_distance,
 esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_distance, uint32_t *distance);
 
 void read_ultrasonic_sensors(void* pvParameters); 
+void reset_ultrasonic_sensors(ultrasonic_sensor_parameters_t *ultrasonicSensorParameters); 
 
 #ifdef __cplusplus
 }
