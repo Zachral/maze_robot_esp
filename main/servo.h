@@ -13,8 +13,8 @@
 #define RIGHT_SERVO_GIPO             13        // GPIO connects to the PWM signal line
 #define SERVO_TIMEBASE_RESOLUTION_HZ 1000000  // 1MHz, 1us per tick
 #define SERVO_TIMEBASE_PERIOD        20000    // 20000 ticks, 20ms
-#define DEGREE_OF_TURN               60
-#define DEGREE_U_TURN                120
+#define DEGREE_OF_TURN               55
+#define DEGREE_U_TURN                115
 
 mcpwm_cmpr_handle_t left_servo_init();
 mcpwm_cmpr_handle_t right_servo_init(); 

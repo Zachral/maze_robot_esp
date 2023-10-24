@@ -170,9 +170,9 @@ esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_dis
 void read_ultrasonic_sensors(void* pvParameters){
     ultrasonic_sensor_parameters_t* params = (ultrasonic_sensor_parameters_t*) pvParameters; 
     esp_err_t error; 
-
+    
     while(1){
-        if(IS_READING_SENSOR && (esp_timer_get_time() - params->msLastTurn > 1500000)){
+        if(IS_READING_SENSOR && (esp_timer_get_time() - params->msLastTurn > 900000)){
             error = ultrasonic_measure_cm(&params->frontSensor,MAX_SENSOR_DISTANCE,&params->frontDistance);
             if (error != ESP_OK){
                 printf("Front Error: %d\n", error);

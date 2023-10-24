@@ -133,7 +133,7 @@ mcpwm_cmpr_handle_t right_servo_init(){
 void drive_forward(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator){
     printf("FORWARD!\n");
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*2)));
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *2.2)))); /*The right servo needs to run at a negative value to drive the robot forward*/
+    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *1.9)))); /*The right servo needs to run at a negative value to drive the robot forward*/
     return; 
 }
 
@@ -190,16 +190,17 @@ void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right
         while(*yaw < DEGREE_U_TURN){
             calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime); 
             printf("Yaw = %.4f\n", *yaw);
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2 )));
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2))));
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2)))); 
+           
         }
         return; 
     }else{
         while(*yaw > -DEGREE_U_TURN){
             calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
             printf("Yaw = %.4f\n", *yaw);
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2))));
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2)))); 
+             ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2 )));
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
         }
         return; 
     }
