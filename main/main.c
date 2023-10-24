@@ -85,6 +85,7 @@ void app_main(void)
           break; 
         }else{
           drive_backwards(left_servo,right_servo); 
+          stop(left_servo,right_servo); 
           u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance, 
                 mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
@@ -95,7 +96,7 @@ void app_main(void)
       if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25)){
         TOGGLE_SENSOR_READING_STATE();
         printf("CHECKING DRIVE PATH!"); 
-        vTaskDelay(pdMS_TO_TICKS(500)); 
+        vTaskDelay(pdMS_TO_TICKS(1000)); 
         driveDirection = decide_path(ultrasonicSensorParameters);
         if(driveDirection == LEFT){
           stop(left_servo,right_servo); 
@@ -105,6 +106,7 @@ void app_main(void)
           drive_forward(left_servo, right_servo);
         }
         if(driveDirection == RIGHT){
+          stop(left_servo,right_servo); 
           turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
         }
         reset_ultrasonic_sensors(&ultrasonicSensorParameters); 

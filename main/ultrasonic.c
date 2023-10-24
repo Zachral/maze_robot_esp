@@ -187,8 +187,9 @@ void read_ultrasonic_sensors(void* pvParameters){
                 printf("Right error: %d\n", error);
             }
             printf("left distance: %ld    front distance: %ld    right distance: %ld\n", params->leftDistance, params->frontDistance, params->rightDistance);
+            vTaskDelay(pdMS_TO_TICKS(400)); 
         }
-        vTaskDelay(pdMS_TO_TICKS(400));
+         vTaskDelay(pdMS_TO_TICKS(200));
     }
 }
 
