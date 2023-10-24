@@ -12,8 +12,8 @@
 #include "common_defines.h"
 #include "mpu6050.h"
 
-#define DEGREE_OF_TURN  73
-#define DEGREE_U_TURN   140
+#define DEGREE_OF_TURN  70
+#define DEGREE_U_TURN   130
 
 static const char *L = "Left servo";
 static const char *R = "Right servo"; 
