@@ -41,6 +41,8 @@ static const char *MPU6050 = "mpu6050";
 
 void app_main(void)
 {
+    actions_taken_by_robot_t actionsTakenByRobot; 
+    actionsTakenByRobot.numberOfActions = 0; 
     ultrasonic_sensor_parameters_t ultrasonicSensorParameters; 
     mcpwm_cmpr_handle_t left_servo = left_servo_init(); 
     mcpwm_cmpr_handle_t right_servo = right_servo_init(); 
@@ -48,8 +50,8 @@ void app_main(void)
     mpu6050_rotation_t rotation = { 0,0,0 };
     double gyroErrorZ  = 0.0, yaw = 0.0;
     uint64_t previousTime = esp_timer_get_time(); 
+    uint64_t timeSinceLastSensorReading = 0; 
     TaskHandle_t flashLEDHandle = NULL; 
-    uint8_t driveDirection; 
     bool isPressed = false; 
     led_init();
     xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle);
@@ -66,11 +68,12 @@ void app_main(void)
 
     while (isPressed){
       drive_forward(left_servo, right_servo);  
+      read_ultrasonic_sensors(&ultrasonicSensorParameters); 
       
-      if(ultrasonicSensorParameters.leftDistance < 4){
+      if(ultrasonicSensorParameters.leftDistance < 6){
         stabilize(left_servo, right_servo, LEFT); 
       }
-      if(ultrasonicSensorParameters.rightDistance < 4){
+      if(ultrasonicSensorParameters.rightDistance < 6){
         stabilize(left_servo, right_servo, RIGHT); 
       }
 
@@ -85,31 +88,31 @@ void app_main(void)
           stop(left_servo,right_servo); 
           u_turn(left_servo,right_servo, ultrasonicSensorParameters, mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           stop(left_servo,right_servo);
+          add_action_to_current_path(U_TURN, &actionsTakenByRobot); 
+          actionsTakenByRobot.numberOfActions++; 
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
         }
       }
-        
-      if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25))
-        printf("Turn detected!\n");
-        vTaskDelay(pdMS_TO_TICKS(1800)); 
-        printf("CHECKING DRIVE PATH!"); 
-        driveDirection = decide_path(ultrasonicSensorParameters);
-        if(driveDirection == LEFT){
-          stop(left_servo,right_servo); 
-          turn_left(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
-          stop(left_servo,right_servo);
-        } 
-        if(driveDirection == FORWARD){
-          drive_forward(left_servo, right_servo);
+
+
+      if(esp_timer_get_time() - timeSinceLastSensorReading > 450000){  
+        if((ultrasonicSensorParameters.leftDistance > 25) &&  is_making_an_action(actionsTakenByRobot, LEFT_TURN)){
+            stop(left_servo,right_servo); 
+            turn_left(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
+            stop(left_servo,right_servo);
+            add_action_to_current_path(LEFT_TURN, &actionsTakenByRobot);
+            actionsTakenByRobot.numberOfActions++; 
+          }
+
+        if((ultrasonicSensorParameters.rightDistance > 25) && is_making_an_action(actionsTakenByRobot, LEFT_TURN)){
+            stop(left_servo,right_servo); 
+            turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
+            stop(left_servo,right_servo); 
+            add_action_to_current_path(RIGHT, &actionsTakenByRobot);
+            actionsTakenByRobot.numberOfActions++; 
         }
-        if(driveDirection == RIGHT){
-          stop(left_servo,right_servo); 
-          turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
-          stop(left_servo,right_servo); 
-        }
-        reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+      timeSinceLastSensorReading = esp_timer_get_time(); 
       }
-      
       vTaskDelay(pdMS_TO_TICKS(10)); 
     }
     
