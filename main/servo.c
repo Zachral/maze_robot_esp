@@ -11,14 +11,12 @@
 #include "servo.h"
 #include "common_defines.h"
 #include "mpu6050.h"
-
-#define DEGREE_OF_TURN  70
-#define DEGREE_U_TURN   130
+#include "ultrasonic.h"
 
 static const char *L = "Left servo";
 static const char *R = "Right servo"; 
  
-int servoSpeed = 60;
+int servoSpeed = 80;
 
 static inline uint32_t run_servos_at_speed(int servoSpeed){
     return (servoSpeed - SERVO_MIN_DEGREE) * (SERVO_MAX_PULSEWIDTH_US - SERVO_MIN_PULSEWIDTH_US) / (SERVO_MAX_DEGREE - SERVO_MIN_DEGREE) + SERVO_MIN_PULSEWIDTH_US;
@@ -133,6 +131,7 @@ mcpwm_cmpr_handle_t right_servo_init(){
 
     /*Functions controlling the different drive functions*/
 void drive_forward(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator){
+    printf("FORWARD!\n");
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*2)));
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *2.2)))); /*The right servo needs to run at a negative value to drive the robot forward*/
     return; 
@@ -148,7 +147,7 @@ void drive_slowly_forward(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_
 void stop(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator){
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(0)));
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(0))); 
-    vTaskDelay(pdMS_TO_TICKS(600)); //to get the robot to come to a full stop to stablize the gyro. 
+    vTaskDelay(pdMS_TO_TICKS(1000)); //to get the robot to come to a full stop to stablize the gyro. 
     return; 
     }
 
@@ -184,23 +183,23 @@ void turn_right(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t r
 return; 
 }
 
-void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, uint8_t leftSensor, uint8_t rightSensor,mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
+void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, ultrasonic_sensor_parameters_t ultrasonicSensorParameters ,mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
     *yaw = 0.0;
     printf("U turn!\n"); 
-    if (leftSensor > rightSensor){
+    if (ultrasonicSensorParameters.leftDistance > ultrasonicSensorParameters.rightDistance){
         while(*yaw < DEGREE_U_TURN){
             calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime); 
             printf("Yaw = %.4f\n", *yaw);
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2))));
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2)))); 
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2 )));
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
         }
         return; 
-    } else{
+    }else{
         while(*yaw > -DEGREE_U_TURN){
             calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
             printf("Yaw = %.4f\n", *yaw);
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2)));
-            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2))));
+            ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2)))); 
         }
         return; 
     }

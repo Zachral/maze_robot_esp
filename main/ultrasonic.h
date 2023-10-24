@@ -75,6 +75,7 @@ typedef struct
     uint32_t frontDistance;
     uint32_t leftDistance;
     uint32_t rightDistance; 
+    uint64_t msLastTurn; 
 }ultrasonic_sensor_parameters_t;
 
 /**

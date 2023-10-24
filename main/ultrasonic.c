@@ -85,6 +85,8 @@ esp_err_t ultrasonic_init(ultrasonic_sensor_parameters_t *ultrasonicSensorParame
         ultrasonicSensorParameters->leftDistance = 5;
         ultrasonicSensorParameters->rightDistance = 5; 
 
+        ultrasonicSensorParameters->msLastTurn = esp_timer_get_time(); 
+
         CHECK(gpio_set_direction(ultrasonicSensorParameters->frontSensor.trigger_pin, GPIO_MODE_OUTPUT));
         CHECK(gpio_set_direction(ultrasonicSensorParameters->frontSensor.echo_pin, GPIO_MODE_INPUT));
         gpio_set_level(ultrasonicSensorParameters->frontSensor.trigger_pin, 0);
@@ -170,7 +172,7 @@ void read_ultrasonic_sensors(void* pvParameters){
     esp_err_t error; 
 
     while(1){
-        if(IS_READING_SENSOR){
+        if(IS_READING_SENSOR && (esp_timer_get_time() - params->msLastTurn > 1500000)){
             error = ultrasonic_measure_cm(&params->frontSensor,MAX_SENSOR_DISTANCE,&params->frontDistance);
             if (error != ESP_OK){
                 printf("Front Error: %d\n", error);
@@ -181,15 +183,13 @@ void read_ultrasonic_sensors(void* pvParameters){
                 printf("Left Error: %d\n", error);
             }
 
-            
             error = ultrasonic_measure_cm(&params->rightSensor,MAX_SENSOR_DISTANCE,&params->rightDistance);
             if (error != ESP_OK){
                 printf("Right error: %d\n", error);
             }
             printf("left distance: %ld    front distance: %ld    right distance: %ld\n", params->leftDistance, params->frontDistance, params->rightDistance);
-            vTaskDelay(pdMS_TO_TICKS(400)); 
         }
-         vTaskDelay(pdMS_TO_TICKS(200));
+         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 

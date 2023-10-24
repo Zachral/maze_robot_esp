@@ -57,7 +57,7 @@ void app_main(void)
     ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
-    calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
+    //calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
     vTaskDelete(flashLEDHandle);
     light_led(); 
     //runs until button is pressed.
@@ -86,17 +86,18 @@ void app_main(void)
         }else{
           drive_backwards(left_servo,right_servo); 
           stop(left_servo,right_servo); 
-          u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance, 
-                mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
+          u_turn(left_servo,right_servo, ultrasonicSensorParameters, mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+          ultrasonicSensorParameters.msLastTurn = esp_timer_get_time(); 
         }
         TOGGLE_SENSOR_READING_STATE(); 
       }
         
       if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25)){
         TOGGLE_SENSOR_READING_STATE();
+        printf("Turn detected!\n");
+        vTaskDelay(pdMS_TO_TICKS(1500)); 
         printf("CHECKING DRIVE PATH!"); 
-        vTaskDelay(pdMS_TO_TICKS(1000)); 
         driveDirection = decide_path(ultrasonicSensorParameters);
         if(driveDirection == LEFT){
           stop(left_servo,right_servo); 
@@ -110,6 +111,7 @@ void app_main(void)
           turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
         }
         reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+        ultrasonicSensorParameters.msLastTurn = esp_timer_get_time(); 
         TOGGLE_SENSOR_READING_STATE();  
       }
       
