@@ -43,6 +43,7 @@
 #include <esp_timer.h>
 #include <ets_sys.h>
 #include <esp_log.h>
+#include <stdbool.h>
 
 #define TRIGGER_LOW_DELAY   4
 #define TRIGGER_HIGH_DELAY  10
@@ -69,6 +70,8 @@ static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 #define CHECK_ARG(VAL) do { if (!(VAL)) return ESP_ERR_INVALID_ARG; } while (0)
 #define CHECK(x) do { esp_err_t __; if ((__ = x) != ESP_OK) return __; } while (0)
 #define RETURN_CRITICAL(RES) do { PORT_EXIT_CRITICAL; return RES; } while(0)
+
+bool sensor_reading_state = true; 
 
 esp_err_t ultrasonic_init(ultrasonic_sensor_parameters_t *ultrasonicSensorParameters){
         ultrasonicSensorParameters->frontSensor.trigger_pin = GPIO_NUM_22;
@@ -167,22 +170,24 @@ void read_ultrasonic_sensors(void* pvParameters){
     esp_err_t error; 
 
     while(1){
-        error = ultrasonic_measure_cm(&params->frontSensor,MAX_SENSOR_DISTANCE,&params->frontDistance);
-        if (error != ESP_OK){
-            printf("Front Error: %d\n", error);
-       }
+        if(IS_READING_SENSOR){
+            error = ultrasonic_measure_cm(&params->frontSensor,MAX_SENSOR_DISTANCE,&params->frontDistance);
+            if (error != ESP_OK){
+                printf("Front Error: %d\n", error);
+            }
 
-        error = ultrasonic_measure_cm(&params->leftSensor,MAX_SENSOR_DISTANCE,&params->leftDistance);
-        if (error != ESP_OK){
-            printf("Left Error: %d\n", error);
-       }
+            error = ultrasonic_measure_cm(&params->leftSensor,MAX_SENSOR_DISTANCE,&params->leftDistance);
+            if (error != ESP_OK){
+                printf("Left Error: %d\n", error);
+            }
 
-        
-        error = ultrasonic_measure_cm(&params->rightSensor,MAX_SENSOR_DISTANCE,&params->rightDistance);
-        if (error != ESP_OK){
-            printf("Right error: %d\n", error);
-       }
-
+            
+            error = ultrasonic_measure_cm(&params->rightSensor,MAX_SENSOR_DISTANCE,&params->rightDistance);
+            if (error != ESP_OK){
+                printf("Right error: %d\n", error);
+            }
+            printf("left distance: %ld    front distance: %ld    right distance: %ld\n", params->leftDistance, params->frontDistance, params->rightDistance);
+        }
         vTaskDelay(pdMS_TO_TICKS(400));
     }
 }

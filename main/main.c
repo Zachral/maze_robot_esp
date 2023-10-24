@@ -7,6 +7,7 @@
 #include <esp_log.h>
 #include <i2cdev.h> 
 #include <esp_timer.h>
+#include <stdbool.h>
 #include "ultrasonic.h"
 #include "servo.h"
 #include "driver/mcpwm_prelude.h"
@@ -56,10 +57,9 @@ void app_main(void)
     ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
-    //calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
+    calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
     vTaskDelete(flashLEDHandle);
     light_led(); 
-    drive_forward(&left_servo, &right_servo); 
     //runs until button is pressed.
     button_click(&isPressed); 
     xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &ultrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
@@ -67,19 +67,20 @@ void app_main(void)
 
 
     while (isPressed){
-      drive_forward(&left_servo, &right_servo); 
-
+      drive_forward(left_servo, right_servo);  
+      
       if(ultrasonicSensorParameters.leftDistance < 4){
-        stabilize(&left_servo, &right_servo, LEFT); 
+        stabilize(left_servo, right_servo, LEFT); 
       }
       if(ultrasonicSensorParameters.rightDistance < 4){
-        stabilize(&left_servo, &right_servo, RIGHT); 
+        stabilize(left_servo, right_servo, RIGHT); 
       }
 
       if(ultrasonicSensorParameters.frontDistance < 9){
-        //vTaskSuspend(&ultrasonicSensorHandle); 
-        drive_slowly_forward(&left_servo, &right_servo); 
+        TOGGLE_SENSOR_READING_STATE(); 
+        drive_slowly_forward(left_servo, right_servo); 
         if(detect_red_color()){
+          stop(left_servo, right_servo); 
           light_led();
           break; 
         }else{
@@ -87,26 +88,30 @@ void app_main(void)
           u_turn(left_servo,right_servo, ultrasonicSensorParameters.leftDistance, ultrasonicSensorParameters.rightDistance, 
                 mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
-         // vTaskResume(&ultrasonicSensorHandle); 
         }
-
-        if(ultrasonicSensorParameters.leftDistance > 20 || ultrasonicSensorParameters.rightDistance > 20){
-         // vTaskSuspend(&ultrasonicSensorHandle); 
-          vTaskDelay(pdMS_TO_TICKS(500)); 
-          driveDirection = decide_path(ultrasonicSensorParameters);
-          if(driveDirection == LEFT){
-            turn_left(&left_servo,&right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
-          } 
-          if(driveDirection == FORWARD){
-            drive_forward(&left_servo, &right_servo);
-          }
-          if(driveDirection == RIGHT){
-            turn_right(&left_servo,&right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
-          }
-          reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
-         // vTaskResume(&ultrasonicSensorHandle); 
-        }
+        TOGGLE_SENSOR_READING_STATE(); 
       }
+        
+      if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25)){
+        TOGGLE_SENSOR_READING_STATE();
+        printf("CHECKING DRIVE PATH!"); 
+        vTaskDelay(pdMS_TO_TICKS(500)); 
+        driveDirection = decide_path(ultrasonicSensorParameters);
+        if(driveDirection == LEFT){
+          stop(left_servo,right_servo); 
+          turn_left(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
+        } 
+        if(driveDirection == FORWARD){
+          drive_forward(left_servo, right_servo);
+        }
+        if(driveDirection == RIGHT){
+          turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime); 
+        }
+        reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
+        TOGGLE_SENSOR_READING_STATE();  
+      }
+      
+      vTaskDelay(pdMS_TO_TICKS(10)); 
     }
     
 }

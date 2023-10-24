@@ -16,7 +16,7 @@
 static const char *L = "Left servo";
 static const char *R = "Right servo"; 
  
-int servoSpeed = 40;
+int servoSpeed = 60;
 
 static inline uint32_t run_servos_at_speed(int servoSpeed){
     return (servoSpeed - SERVO_MIN_DEGREE) * (SERVO_MAX_PULSEWIDTH_US - SERVO_MIN_PULSEWIDTH_US) / (SERVO_MAX_DEGREE - SERVO_MIN_DEGREE) + SERVO_MIN_PULSEWIDTH_US;
@@ -132,7 +132,7 @@ mcpwm_cmpr_handle_t right_servo_init(){
     /*Functions controlling the different drive functions*/
 void drive_forward(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator){
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed*2)));
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *2)))); /*The right servo needs to run at a negative value to drive the robot forward*/
+    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed - (servoSpeed *2.2)))); /*The right servo needs to run at a negative value to drive the robot forward*/
     return; 
 }
 
@@ -146,6 +146,7 @@ void drive_slowly_forward(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_
 void stop(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator){
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(0)));
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(0))); 
+    vTaskDelay(pdMS_TO_TICKS(600)); //to get the robot to come to a full stop to stablize the gyro. 
     return; 
     }
 
@@ -159,7 +160,7 @@ void drive_backwards(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handl
 void turn_left(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
     *yaw = 0.0; //reset yaw as the degree of turn is only relevant in comparision to starting direction.
     printf("turn left!\n");
-    while(*yaw < 70){
+    while(*yaw < 75){
         calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
         printf("Yaw = %.4f\n", *yaw);
         ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2))));
@@ -172,7 +173,7 @@ void turn_left(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t ri
 void turn_right(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right_servo_comparator, mpu6050_dev_t dev, mpu6050_rotation_t *rotation, double *gyroErrorZ, double *yaw, uint64_t *previousTime){
     *yaw = 0.0; //reset yaw as the degree of turn is only relevant in comparision to starting direction.
     printf("turn right!\n");
-    while (*yaw > -70){
+    while (*yaw > -75){
         calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
         printf("Yaw = %.4f\n", *yaw);
         ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2)));
@@ -185,14 +186,14 @@ void u_turn(mcpwm_cmpr_handle_t left_servo_comparator, mcpwm_cmpr_handle_t right
     *yaw = 0.0;
     printf("U turn!\n"); 
     if (leftSensor > rightSensor){
-        while(*yaw < 70){
+        while(*yaw < 140){
             calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime); 
             ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2))));
             ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed -(servoSpeed *2)))); 
         }
         return; 
     } else{
-        while(*yaw > -70){
+        while(*yaw > -140){
             calculate_yaw(dev, rotation, gyroErrorZ, yaw, previousTime);
             ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(left_servo_comparator, run_servos_at_speed(servoSpeed *2)));
             ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(right_servo_comparator, run_servos_at_speed(servoSpeed *2))); 
