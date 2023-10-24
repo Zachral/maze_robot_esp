@@ -49,7 +49,6 @@ void app_main(void)
     double gyroErrorZ  = 0.0, yaw = 0.0;
     uint64_t previousTime = esp_timer_get_time(); 
     TaskHandle_t flashLEDHandle = NULL; 
-    TaskHandle_t ultrasonicSensorHandle = NULL; 
     uint8_t driveDirection; 
     bool isPressed = false; 
     led_init();
@@ -62,7 +61,6 @@ void app_main(void)
     light_led(); 
     //runs until button is pressed.
     button_click(&isPressed); 
-    xTaskCreate(read_ultrasonic_sensors, "ultrasonic reading", 4096, &ultrasonicSensorParameters, 5, &ultrasonicSensorHandle); 
     turn_of_led(); 
 
 
@@ -77,7 +75,6 @@ void app_main(void)
       }
 
       if(ultrasonicSensorParameters.frontDistance < 9){
-        TOGGLE_SENSOR_READING_STATE(); 
         drive_slowly_forward(left_servo, right_servo); 
         if(detect_red_color()){
           stop(left_servo, right_servo); 
@@ -89,13 +86,10 @@ void app_main(void)
           u_turn(left_servo,right_servo, ultrasonicSensorParameters, mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           stop(left_servo,right_servo);
           reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
-          ultrasonicSensorParameters.msLastTurn = esp_timer_get_time(); 
         }
-        TOGGLE_SENSOR_READING_STATE(); 
       }
         
-      if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25)){
-        TOGGLE_SENSOR_READING_STATE();
+      if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25))
         printf("Turn detected!\n");
         vTaskDelay(pdMS_TO_TICKS(1800)); 
         printf("CHECKING DRIVE PATH!"); 
@@ -114,8 +108,6 @@ void app_main(void)
           stop(left_servo,right_servo); 
         }
         reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
-        ultrasonicSensorParameters.msLastTurn = esp_timer_get_time(); 
-        TOGGLE_SENSOR_READING_STATE();  
       }
       
       vTaskDelay(pdMS_TO_TICKS(10)); 

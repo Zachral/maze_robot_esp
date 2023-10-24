@@ -167,30 +167,25 @@ esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_dis
     return ESP_OK;
 };
 
-void read_ultrasonic_sensors(void* pvParameters){
-    ultrasonic_sensor_parameters_t* params = (ultrasonic_sensor_parameters_t*) pvParameters; 
+esp_err_t read_ultrasonic_sensors(ultrasonic_sensor_parameters_t *ultrasonicParameters){
     esp_err_t error; 
-    
-    while(1){
-        if(IS_READING_SENSOR && (esp_timer_get_time() - params->msLastTurn > 900000)){
-            error = ultrasonic_measure_cm(&params->frontSensor,MAX_SENSOR_DISTANCE,&params->frontDistance);
-            if (error != ESP_OK){
-                printf("Front Error: %d\n", error);
-            }
-
-            error = ultrasonic_measure_cm(&params->leftSensor,MAX_SENSOR_DISTANCE,&params->leftDistance);
-            if (error != ESP_OK){
-                printf("Left Error: %d\n", error);
-            }
-
-            error = ultrasonic_measure_cm(&params->rightSensor,MAX_SENSOR_DISTANCE,&params->rightDistance);
-            if (error != ESP_OK){
-                printf("Right error: %d\n", error);
-            }
-            printf("left distance: %ld    front distance: %ld    right distance: %ld\n", params->leftDistance, params->frontDistance, params->rightDistance);
-        }
-         vTaskDelay(pdMS_TO_TICKS(50));
+    error = ultrasonic_measure_cm(&ultrasonicParameters->frontSensor,MAX_SENSOR_DISTANCE,&ultrasonicParameters->frontDistance);
+    if (error != ESP_OK){
+        printf("Front Error: %d\n", error);
     }
+
+    error = ultrasonic_measure_cm(&ultrasonicParameters->leftSensor,MAX_SENSOR_DISTANCE,&ultrasonicParameters->leftDistance);
+    if (error != ESP_OK){
+        printf("Left Error: %d\n", error);
+    }
+
+    error = ultrasonic_measure_cm(&ultrasonicParameters->rightSensor,MAX_SENSOR_DISTANCE,&ultrasonicParameters->rightDistance);
+    if (error != ESP_OK){
+        printf("Right error: %d\n", error);
+    }
+    printf("left distance: %ld    front distance: %ld    right distance: %ld\n", ultrasonicParameters->leftDistance, ultrasonicParameters->frontDistance, ultrasonicParameters->rightDistance);
+    vTaskDelay(pdMS_TO_TICKS(50));
+    
 }
 
 void reset_ultrasonic_sensors(ultrasonic_sensor_parameters_t *ultrasonicSensorParameters){
