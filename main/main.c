@@ -97,7 +97,7 @@ void app_main(void)
       if((ultrasonicSensorParameters.leftDistance > 25) || (ultrasonicSensorParameters.rightDistance > 25)){
         TOGGLE_SENSOR_READING_STATE();
         printf("Turn detected!\n");
-        vTaskDelay(pdMS_TO_TICKS(2000)); 
+        vTaskDelay(pdMS_TO_TICKS(1800)); 
         printf("CHECKING DRIVE PATH!"); 
         driveDirection = decide_path(ultrasonicSensorParameters);
         if(driveDirection == LEFT){
