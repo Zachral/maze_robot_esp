@@ -77,14 +77,14 @@ void app_main(void)
         stabilize(left_servo, right_servo, RIGHT); 
       }
 
-      if(ultrasonicSensorParameters.frontDistance < 9){
-        drive_slowly_forward(left_servo, right_servo); 
+      if(ultrasonicSensorParameters.frontDistance < 9){; 
+        vTaskDelay(pdMS_TO_TICKS(200)); 
+        stop(left_servo, right_servo); 
         if(detect_red_color()){
-          stop(left_servo, right_servo); 
           light_led();
           break; 
         }else{
-          drive_backwards(left_servo,right_servo); 
+          //drive_backwards(left_servo,right_servo); 
           stop(left_servo,right_servo); 
           u_turn(left_servo,right_servo, ultrasonicSensorParameters, mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           stop(left_servo,right_servo);
@@ -97,6 +97,7 @@ void app_main(void)
 
       if(esp_timer_get_time() - timeSinceLastSensorReading > 450000){  
         if((ultrasonicSensorParameters.leftDistance > 25) &&  is_making_an_action(actionsTakenByRobot, LEFT_TURN)){
+            vTaskDelay(pdMS_TO_TICKS(1200));
             stop(left_servo,right_servo); 
             turn_left(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
             stop(left_servo,right_servo);
@@ -105,6 +106,7 @@ void app_main(void)
           }
 
         if((ultrasonicSensorParameters.rightDistance > 25) && is_making_an_action(actionsTakenByRobot, LEFT_TURN)){
+            vTaskDelay(pdMS_TO_TICKS(1200));
             stop(left_servo,right_servo); 
             turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
             stop(left_servo,right_servo); 
@@ -117,3 +119,6 @@ void app_main(void)
     }
     
 }
+
+// Create task that checks the yaw angle, if the yaw angle is to great, update the servo speed on that side.
+// make to separte variables for servospeed left and right, and they can independently be updated. 

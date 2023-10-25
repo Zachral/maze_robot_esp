@@ -16,7 +16,7 @@ void add_action_to_current_path(driving_action_t action, actions_taken_by_robot_
 //if thats the case, skip this turn action. This is for timing issues when comming back from a dead end. 
 uint8_t is_making_an_action(actions_taken_by_robot_t actionsTakenByRobot, driving_action_t currentTurn){
     if((actionsTakenByRobot.currentRunPath[actionsTakenByRobot.numberOfActions-1].currentAction == currentTurn) && 
-    (esp_timer_get_time() - actionsTakenByRobot.currentRunPath[actionsTakenByRobot.numberOfActions-1].timeSinceAction < 5000)){
+    (esp_timer_get_time() - actionsTakenByRobot.currentRunPath[actionsTakenByRobot.numberOfActions-1].timeSinceAction < 5000000)){
         printf("no turn to %d", currentTurn);
         return 0;
     }
