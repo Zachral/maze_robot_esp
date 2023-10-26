@@ -9,7 +9,7 @@
 - [Hardware](#hardware)
 - [Wiring diagram](#wiring-diagram)
 - [Development process](#development-process)
-- [Version controrl](#version-control)
+- [Version control](#version-control)
 - [Pictures and video](#pictures-and-video)
 - [Improvements to be done](#improvements-to-be-done)
 
