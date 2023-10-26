@@ -58,7 +58,8 @@ void app_main(void)
         stabilize(left_servo, right_servo, RIGHT); 
       }
 
-      if(ultrasonicSensorParameters.frontDistance < 9){; 
+      if((ultrasonicSensorParameters.frontDistance < 9) && 
+        ((ultrasonicSensorParameters.leftDistance < 25) && (ultrasonicSensorParameters.rightDistance < 25))){; 
         vTaskDelay(pdMS_TO_TICKS(200)); 
         stop(left_servo, right_servo); 
         if(detect_red_color()){
