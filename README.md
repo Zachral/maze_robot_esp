@@ -9,6 +9,7 @@
 - [Hardware](#hardware)
 - [Wiring diagram](#wiring-diagram)
 - [Development process](#development-process)
+- [Version controrl](#version-control)
 - [Pictures and video](#pictures-and-video)
 - [Improvements to be done](#improvements-to-be-done)
 
@@ -68,6 +69,10 @@ Over the course of development, the following milestones were achieved:
     Challenges arose when the robot encountered a simple maze, requiring adjustments and calibration mostly related to I/O timing.
     Challenges with servo reliability when turning were addressed by adding a gyroscope.
     The project outgrew the initial microcontroller, necessitating an upgrade to an ESP32.
+
+## Version control
+
+All source code for this project is managed and versioned on GitHub. Regular updates, commits, and modifications can be tracked in the repository's commit history.
 
 ## Pictures and video
     Front:
