@@ -1,21 +1,21 @@
 
-
-
-
-
 # Maze Solving Robot
 
 ## Table of Contents
 - [Purpose](#purpose)
+    - [Inital requeriments for the project](#initial-requirements-for-the-project)
+      -[The robot should:](#the-robot-should)
+      -[It is desirable that the robot would:](#it-is-desirable-that-the-robot-would)
 - [Hardware](#hardware)
 - [Background](#background)
 
 ## Purpose
-Purpose of the robot:
 
-To be able to solve a maze by finding the goal.
+This project aims to create a robot capable of independently navigating a maze, making path decisions at intersections, avoiding obstacles, and identifying the goal using color detection. It also seeks to optimize the path and provide real-time feedback via a dashboard.
 
-The robot should:
+### Inital requeriments for the project.
+
+#### The robot should:
 
     Independently move itself.
     Choose a path at intersections.
@@ -24,7 +24,7 @@ The robot should:
     Save the path choices it makes.
     Distinguish between a regular wall and the goal using color detection.
 
-It is desirable that the robot would:
+#### It is desirable that the robot would:
 
     Optimize the path over multiple runs in the maze.
     Be able to be started and stopped via a dashboard.
@@ -32,7 +32,6 @@ It is desirable that the robot would:
 
 
 ## Hardware
-Hardware:
 
     Esp 32:                                   1 piece
     Hc-Sr04 Ultrasonic sensor:                3 pieces
