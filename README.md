@@ -21,7 +21,7 @@ It is desirable that the robot would:
 
 Hardware:
 
-    Esp 32: 1 piece
+    Esp 32:                                   1 piece
     Hc-Sr04 Ultrasonic sensor:                3 pieces
     TCS3200 color sensor:                     1 piece
     Servo MSR-1.3-9 360°:                     2 pieces
@@ -34,3 +34,9 @@ Hardware:
     Mini breadboard:                          2 pieces
     3xAAA battery pack:                       2 pieces
     Lego chassi
+
+Wiring diagram: 
+
+
+![circuit](https://github.com/Zachral/maze_robot_esp/assets/101337887/a4b77c5f-a8fc-4ea3-92a7-6ecd24f4ad6a)
+
