@@ -37,13 +37,13 @@
  * BSD Licensed as described in the file LICENSE
  */
 #include <esp_idf_lib_helpers.h>
-#include "ultrasonic.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <esp_timer.h>
 #include <ets_sys.h>
 #include <esp_log.h>
 #include <stdbool.h>
+#include "hc_sr_04_ultrasonic_sensor.h""
 
 #define TRIGGER_LOW_DELAY   4
 #define TRIGGER_HIGH_DELAY  10

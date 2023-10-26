@@ -11,7 +11,7 @@
 #include "servo.h"
 #include "common_defines.h"
 #include "mpu6050.h"
-#include "ultrasonic.h"
+#include "hc_sr_04_ultrasonic_sensor.h"
 
 static const char *L = "Left servo";
 static const char *R = "Right servo"; 
