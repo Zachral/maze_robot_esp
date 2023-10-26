@@ -1,5 +1,16 @@
-Maze solving robot!
 
+
+
+
+
+# Maze Solving Robot
+
+## Table of Contents
+- [Purpose](#purpose)
+- [Hardware](#hardware)
+- [Background](#background)
+
+## Purpose
 Purpose of the robot:
 
 To be able to solve a maze by finding the goal.
@@ -19,6 +30,8 @@ It is desirable that the robot would:
     Be able to be started and stopped via a dashboard.
     Real-time display the time for the attempt on the dashboard.
 
+
+## Hardware
 Hardware:
 
     Esp 32:                                   1 piece
@@ -34,6 +47,8 @@ Hardware:
     Mini breadboard:                          2 pieces
     3xAAA battery pack:                       2 pieces
     Lego chassi
+
+## Background
 
 Wiring diagram: 
 
