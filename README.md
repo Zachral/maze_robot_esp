@@ -29,7 +29,7 @@ To develop and construct a robot that is capable of solving a maze.
 #### It is desirable that the robot would:
 
     Optimize the path over multiple runs in the maze.
-    Be able to be started and stopped via a dashboard.
+    Be able to be restarted and monitored via an online dashboard.
     Real-time display the time for the attempt on the dashboard.
 
 
