@@ -36,6 +36,7 @@ Hardware:
     Lego chassi
 
 Wiring diagram: 
+
 (Note that on the physical robot, the ESP32 is turned upside down to get access to the pins.)
 
 ![circuit](https://github.com/Zachral/maze_robot_esp/assets/101337887/a4b77c5f-a8fc-4ea3-92a7-6ecd24f4ad6a)
