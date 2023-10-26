@@ -8,13 +8,13 @@
 #include <i2cdev.h> 
 #include <esp_timer.h>
 #include <stdbool.h>
-#include "ultrasonic.h"
+#include "hc_sr_04_ultrasonic_sensor.h"
 #include "servo.h"
 #include "driver/mcpwm_prelude.h"
 #include "common_defines.h"
 #include "led.h"
 #include "button.h"
-#include "color_sensor.h"
+#include "tcs3200_color_sensor.h"
 #include "mpu6050.h"
 #include "path.h"
 

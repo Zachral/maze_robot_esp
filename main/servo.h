@@ -2,7 +2,7 @@
 #define _SERVO_H__
 #include "driver/mcpwm_prelude.h"
 #include "mpu6050.h"
-#include "ultrasonic.h"
+#include "hc_sr_04_ultrasonic_sensor.h"
 // Please consult the datasheet of your servo before changing the following parameters
 #define SERVO_MIN_PULSEWIDTH_US 500  // Minimum pulse width in microsecond
 #define SERVO_MAX_PULSEWIDTH_US 2400  // Maximum pulse width in microsecond

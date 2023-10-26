@@ -2,7 +2,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_err.h"
-#include "color_sensor.h"
+#include "tcs3200_color_sensor.h"
 #include "common_defines.h"
 
 esp_err_t color_sensor_init(){

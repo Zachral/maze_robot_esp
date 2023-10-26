@@ -3,7 +3,7 @@
 #include <freertos/task.h>
 #include <esp_timer.h>
 #include "common_defines.h"
-#include "ultrasonic.h"
+#include "hc_sr_04_ultrasonic_sensor.h"
 #include "path.h"
 
 void add_action_to_current_path(driving_action_t action, actions_taken_by_robot_t *actionsTakenByRobot){

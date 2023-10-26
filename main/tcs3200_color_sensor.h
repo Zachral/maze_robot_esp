@@ -1,5 +1,5 @@
-#ifndef _COLOR_SENSOR_H__
-#define _COLOR_SENSOR_H__
+#ifndef _TCS3200_COLOR_SENSOR_H__
+#define _TCS3200_COLOR_SENSOR_H__
 
 #include "driver/gpio.h"
 

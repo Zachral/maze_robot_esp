@@ -1,7 +1,7 @@
 #ifndef _PATH_H__
 #define _PATH_H_
 #include <stdint.h>
-#include "ultrasonic.h"
+#include "hc_sr_04_ultrasonic_sensor.h"
 
 
 typedef enum {
