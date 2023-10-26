@@ -18,25 +18,6 @@
 #include "mpu6050.h"
 #include "path.h"
 
-//#define CONFIG_EXAMPLE_SDA_GPIO     GPIO_NUM_18
-//#define CONFIG_EXAMPLE_SCL_GPIO     GPIO_NUM_19
-//left trigger pin  5
-//left echo pin 17
-//front trigger pin 22
-//front echo pin 23
-//right trigger pin 32 
-//right echo pin 33
-//servo left 15
-//servo right 13
-//color sensor out 21
-//color sensor s2 4
-//color sensor s3 16
-//color sensor s0 26
-//color sensor s1 27
-//button 14
-//led led 25
-
-
 static const char *MPU6050 = "mpu6050";
 
 void app_main(void)
@@ -58,10 +39,10 @@ void app_main(void)
     ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
-    //calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
+    calibrate_mpu6050(mpu6050Sensor, &rotation, &gyroErrorZ); 
     vTaskDelete(flashLEDHandle);
     light_led(); 
-    //runs until button is pressed.
+    //runs until button is pressed, need to be handled better
     button_click(&isPressed); 
     turn_of_led(); 
 
@@ -84,7 +65,6 @@ void app_main(void)
           light_led();
           break; 
         }else{
-          //drive_backwards(left_servo,right_servo); 
           stop(left_servo,right_servo); 
           u_turn(left_servo,right_servo, ultrasonicSensorParameters, mpu6050Sensor, &rotation, &gyroErrorZ,&yaw, &previousTime);
           stop(left_servo,right_servo);
@@ -119,6 +99,3 @@ void app_main(void)
     }
     
 }
-
-// Create task that checks the yaw angle, if the yaw angle is to great, update the servo speed on that side.
-// make to separte variables for servospeed left and right, and they can independently be updated. 
