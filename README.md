@@ -51,8 +51,8 @@ To develop and construct a robot that is capable of solving a maze.
     Lego chassi
 
 ## Wiring diagram: 
+![circuit(3)](https://github.com/Zachral/maze_robot_esp/assets/101337887/be745fdc-924e-4ef5-82da-3678eac1bb0f)
 
-![circuit(2)](https://github.com/Zachral/maze_robot_esp/assets/101337887/55a1b238-39a2-4e7a-9d89-aafea0e13305)
 
 (Note that on the physical robot, the ESP32 is turned upside down to get access to the pins as can be seen in the pictures below)
 
