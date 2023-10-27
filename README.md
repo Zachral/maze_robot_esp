@@ -93,7 +93,7 @@ All source code for this project is managed and versioned on GitHub. Regular upd
 [![Maze Solving Robot Video](https://img.youtube.com/vi/kiKUuKGGRBU/0.jpg)](https://www.youtube.com/watch?v=kiKUuKGGRBU)
 
 ## Improvements to be done
-    Rewrite the stabilize function to use  use the yaw of the gyro instead of a delay to drive in a straight line. 
+    Rewrite the stabilize function to use the yaw of the gyro in a task instead of a delay to drive in a straight line. 
     Replace the servos with more reliable motors
     Replace the front ball wheel with a component that offers greater ground contact, increasing stability
     Add second batterypack to power sensors and the ESP32
