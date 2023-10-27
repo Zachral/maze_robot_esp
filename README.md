@@ -46,7 +46,7 @@ To develop and construct a robot that is capable of solving a maze.
     Wheels for servo:                         2 pieces
     360° rotating front wheel:                1 piece
     Half breadboard:                          1 piece
-    Mini breadboard:                          2 pieces
+    Mini breadboard:                          3 pieces
     3xAAA battery pack:                       2 pieces
     Lego chassi
 
