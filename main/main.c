@@ -35,7 +35,7 @@ void app_main(void)
     TaskHandle_t flashLEDHandle = NULL; 
     bool isPressed = false; 
     led_init();
-    xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle);
+    xTaskCreate(flash_led, "Flash LED", 4096, NULL, 1, &flashLEDHandle); //LED flashing during setup and configuration
     ultrasonic_init(&ultrasonicSensorParameters); 
     color_sensor_init(); 
     ESP_ERROR_CHECK(i2cdev_init());
@@ -71,10 +71,8 @@ void app_main(void)
           stop(left_servo,right_servo);
           add_action_to_current_path(U_TURN, &actionsTakenByRobot); 
           actionsTakenByRobot.numberOfActions++; 
-          reset_ultrasonic_sensors(&ultrasonicSensorParameters); 
         }
       }
-
 
       if(esp_timer_get_time() - timeSinceLastSensorReading > 450000){  
         if((ultrasonicSensorParameters.leftDistance > 25) &&  is_making_an_action(actionsTakenByRobot, LEFT_TURN)){
@@ -86,7 +84,7 @@ void app_main(void)
             actionsTakenByRobot.numberOfActions++; 
           }
 
-        if((ultrasonicSensorParameters.rightDistance > 25) && is_making_an_action(actionsTakenByRobot, LEFT_TURN)){
+        if((ultrasonicSensorParameters.rightDistance > 25) && is_making_an_action(actionsTakenByRobot, LEFT_TURN) && (ultrasonicSensorParameters.frontDistance < 20)){
             vTaskDelay(pdMS_TO_TICKS(1200));
             stop(left_servo,right_servo); 
             turn_right(left_servo, right_servo, mpu6050Sensor, &rotation, &gyroErrorZ, &yaw, &previousTime);
@@ -98,5 +96,4 @@ void app_main(void)
       }
       vTaskDelay(pdMS_TO_TICKS(10)); 
     }
-    
 }
